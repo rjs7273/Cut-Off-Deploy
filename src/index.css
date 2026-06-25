@@ -1,0 +1,660 @@
+/* ─────────────────────────────────────────────────────────────────
+   CUT-OFF  ·  Global Design System
+   Tailwind CSS v4  ·  data-theme 런타임 다크모드  ·  Capacitor 하이브리드
+   ───────────────────────────────────────────────────────────────── */
+
+/* ── 폰트: Pretendard
+     프로덕션에서는 npm install pretendard 후 로컬 번들 권장
+   ──────────────────────────────────────────────────────────────── */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+@import "tailwindcss";
+
+
+/* ══════════════════════════════════════════════════════════════════
+   1. DARK MODE VARIANT
+   Tailwind dark: 유틸리티를 [data-theme="dark"] 속성 기반으로 동작
+   ══════════════════════════════════════════════════════════════════ */
+@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+
+/* ══════════════════════════════════════════════════════════════════
+   2. DESIGN TOKENS  (@theme)
+   라이트 모드 기본값.  [data-theme="dark"] 에서 CSS 변수를 재정의하면
+   Tailwind 유틸리티까지 자동으로 변경됨 (CSS var 동적 해석).
+   ══════════════════════════════════════════════════════════════════ */
+@theme {
+
+  /* ── 폰트 ── */
+  --font-sans: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+
+  /* ────────────────────────────────────────────────
+     컬러 : 배경 (surface)
+     Tailwind 유틸리티: bg-surface / bg-surface-sub / bg-surface-card
+     ──────────────────────────────────────────────── */
+  --color-surface:       #FFFFFF;
+  --color-surface-sub:   #F7F7F4;
+  --color-surface-card:  #FFFFFF;
+
+  /* ────────────────────────────────────────────────
+     컬러 : 텍스트 (foreground)
+     Tailwind: text-fg / text-fg-muted / text-fg-subtle
+     ──────────────────────────────────────────────── */
+  --color-fg:        #111111;
+  --color-fg-muted:  #666666;
+  --color-fg-subtle: #999999;
+
+  /* ────────────────────────────────────────────────
+     컬러 : 테두리
+     Tailwind: border-line / ring-line
+     ──────────────────────────────────────────────── */
+  --color-line: #E5E5E5;
+
+  /* ────────────────────────────────────────────────
+     컬러 : 브랜드 (navy)
+     Tailwind: bg-navy / text-navy / border-navy
+              bg-navy-light / bg-navy-tint
+              text-accent
+     ──────────────────────────────────────────────── */
+  --color-navy:       #1D2B53;
+  --color-navy-light: #2A3D70;
+  --color-navy-tint:  #EEF1FF;  /* 라벨, 태그 배경 — 다크모드에서 변경 없음 */
+  --color-accent:     #2454FF;  /* iOS 권한 팝업 버튼 등 Blue accent */
+
+  /* ────────────────────────────────────────────────
+     컬러 : 스켈레톤
+     Tailwind: bg-skel / bg-skel2
+     ──────────────────────────────────────────────── */
+  --color-skel:  #EFEFEF;
+  --color-skel2: #E0E0E0;
+
+  /* ────────────────────────────────────────────────
+     컬러 : 태그 / 필터 칩
+     Tailwind: bg-tag / text-tag-fg
+     ──────────────────────────────────────────────── */
+  --color-tag:    #F0F0ED;
+  --color-tag-fg: #555555;
+
+  /* ────────────────────────────────────────────────
+     컬러 : 시맨틱 (상태)
+     ──────────────────────────────────────────────── */
+  --color-success:    #2E7D32;
+  --color-success-bg: #E8F5E9;
+
+  --color-warning:    #E67E00;
+  --color-warning-bg: #FFF3E0;
+
+  --color-error:    #CC3333;
+  --color-error-bg: #FDECEA;
+
+  /* ────────────────────────────────────────────────
+     컬러 : 소셜 로그인 (다크모드에서 반전)
+     Tailwind: bg-google / text-google / bg-apple / text-apple
+     ──────────────────────────────────────────────── */
+  --color-google:    #FFFFFF;
+  --color-google-fg: #111111;
+  --color-apple:     #000000;
+  --color-apple-fg:  #FFFFFF;
+
+  /* ────────────────────────────────────────────────
+     Border Radius
+     Tailwind: rounded-app-sm / rounded-app-md / rounded-app-lg / rounded-app-xl
+     ──────────────────────────────────────────────── */
+  --radius-app-sm: 8px;
+  --radius-app-md: 12px;
+  --radius-app-lg: 16px;
+  --radius-app-xl: 20px;
+
+  /* ────────────────────────────────────────────────
+     앱 셸 치수
+     ──────────────────────────────────────────────── */
+  --spacing-app-bar:    56px;   /* 상단 앱바 높이     */
+  --spacing-bottom-nav: 64px;   /* 하단 탭 바 높이    */
+  --spacing-sheet-r:    22px;   /* 바텀시트 상단 곡률 */
+  --spacing-drawer:    280px;   /* 사이드 드로어 너비 */
+  --spacing-phone:     390px;   /* 프로토타입 폰 너비 */
+
+  /* ────────────────────────────────────────────────
+     Z-index 레이어 스택
+     ──────────────────────────────────────────────── */
+  --z-app-bar:      5;
+  --z-drawer-bg:   20;
+  --z-drawer:      21;
+  --z-sheet-bg:    30;
+  --z-sheet:       31;
+  --z-action-bg:   40;
+  --z-action:      41;
+  --z-modal:       50;
+  --z-notif-perm:  60;
+  --z-toast:       70;
+  --z-loading:     80;
+
+  /* ────────────────────────────────────────────────
+     트랜지션 / 이징
+     ──────────────────────────────────────────────── */
+  --ease-fast:   0.15s ease;
+  --ease-base:   0.20s ease;
+  --ease-slow:   0.30s ease;
+  --ease-theme:  0.25s ease;   /* 다크/라이트 전환 */
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   3. DARK MODE OVERRIDES
+   [data-theme="dark"]에서 CSS 변수를 재정의.
+   Tailwind 유틸리티는 var()를 그대로 사용하므로 자동 반영됨.
+   ══════════════════════════════════════════════════════════════════ */
+[data-theme="dark"] {
+  /* 배경 */
+  --color-surface:      #111111;
+  --color-surface-sub:  #1A1A1A;
+  --color-surface-card: #1E1E1E;
+
+  /* 텍스트 */
+  --color-fg:        #F0F0F0;
+  --color-fg-muted:  #A0A0A0;
+  --color-fg-subtle: #666666;
+
+  /* 테두리 */
+  --color-line: #2C2C2C;
+
+  /* 브랜드 */
+  --color-navy:       #3A5298;
+  --color-navy-light: #4A63A8;
+
+  /* 스켈레톤 */
+  --color-skel:  #252525;
+  --color-skel2: #333333;
+
+  /* 태그 */
+  --color-tag:    #252525;
+  --color-tag-fg: #AAAAAA;
+
+  /* 상태 */
+  --color-warning:    #F5A623;
+  --color-warning-bg: #2A2010;
+
+  /* 소셜 로그인 (다크모드에서 반전) */
+  --color-apple:    #FFFFFF;
+  --color-apple-fg: #000000;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   4. LEGACY CSS VAR ALIASES
+   HTML 원안에서 사용하던 --bg, --navy 등의 변수명을
+   기존 코드 / 인라인 스타일에서 계속 사용할 수 있도록 브리지.
+   컴포넌트에서는 Tailwind 유틸리티(bg-surface 등)를 우선 사용할 것.
+   ══════════════════════════════════════════════════════════════════ */
+:root {
+  --bg:           var(--color-surface);
+  --bg-sub:       var(--color-surface-sub);
+  --bg-card:      var(--color-surface-card);
+  --text-1:       var(--color-fg);
+  --text-2:       var(--color-fg-muted);
+  --text-3:       var(--color-fg-subtle);
+  --border:       var(--color-line);
+  --navy:         var(--color-navy);
+  --navy-light:   var(--color-navy-light);
+  --blue-acc:     var(--color-accent);
+  --chip-sel-bg:  var(--color-navy);
+  --chip-sel-text:#FFFFFF;
+  --skel:         var(--color-skel);
+  --skel2:        var(--color-skel2);
+  --tag-bg:       var(--color-tag);
+  --tag-text:     var(--color-tag-fg);
+  --radius-sm:    var(--radius-app-sm);
+  --radius-md:    var(--radius-app-md);
+  --radius-lg:    var(--radius-app-lg);
+  --radius-xl:    var(--radius-app-xl);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   5. GLOBAL RESET & BASE
+   @layer base 안에 배치 → Tailwind @layer utilities 가 올바르게
+   오버라이드 가능 (CSS Cascade Level 5: unlayered > layered 방지)
+   ══════════════════════════════════════════════════════════════════ */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /* Tailwind v4는 border 단독 사용 시 currentColor로 fallback됨.
+       HTML 초안의 --border: #E5E5E5 전역 적용과 동일하게 맞추기 위해
+       기본 border-color를 --color-line으로 고정한다. */
+    border-color: var(--color-line);
+  }
+
+  html {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* 하이브리드 앱: 네이티브 오버스크롤 방지 */
+    overscroll-behavior: none;
+    /* iOS 터치 하이라이트 제거 */
+    -webkit-tap-highlight-color: transparent;
+    color-scheme: light dark;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-fg);
+    transition:
+      background-color var(--ease-theme),
+      color var(--ease-theme);
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100dvh;
+  }
+
+  /* 스크롤바 전역 숨김 (모바일 앱 UX) */
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  *::-webkit-scrollbar { display: none; }
+
+  /* 버튼 리셋 */
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    padding: 0;
+    line-height: 1;
+    color: inherit;
+  }
+  button:disabled { cursor: not-allowed; pointer-events: none; }
+
+  /* 링크 리셋 */
+  a { color: inherit; text-decoration: none; }
+
+  /* 인풋 / 텍스트에어리어 리셋 */
+  input, textarea, select {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    background: transparent;
+    outline: none;
+    border: none;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  /* 이미지 */
+  img, video { display: block; max-width: 100%; }
+
+  /* 목록 */
+  ul, ol { list-style: none; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   6. TYPOGRAPHY REFERENCE
+   Pretendard 기반 — 아래 값들을 Tailwind 클래스로 표현할 것.
+   ex) text-[32px] font-bold tracking-[-1px]
+
+   ── 사용 font-size ──────────────────────────────────────────────
+   10px · 11px · 12px · 13px · 14px · 15px · 16px
+   17px · 18px · 20px · 22px · 32px
+
+   ── font-weight ─────────────────────────────────────────────────
+   400(normal) · 500(medium) · 600(semibold) · 700(bold)
+
+   ── letter-spacing ──────────────────────────────────────────────
+   -1px · -0.5px · -0.4px · -0.3px · -0.2px
+   0    · 0.2px  · 0.3px  · 0.5px  · 0.8px
+
+   ── line-height ─────────────────────────────────────────────────
+   1.35 · 1.40 · 1.45 · 1.50 · 1.55 · 1.60 · 1.65 · 1.75
+   ══════════════════════════════════════════════════════════════════ */
+
+
+/* ══════════════════════════════════════════════════════════════════
+   7. KEYFRAMES
+   ══════════════════════════════════════════════════════════════════ */
+
+/* 스플래시 로딩 도트 · restricted 상태 dot */
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 1;   }
+}
+
+/* 스켈레톤 shimmer */
+@keyframes skel-shine {
+  0%   { opacity: 1;    }
+  50%  { opacity: 0.45; }
+  100% { opacity: 1;    }
+}
+
+/* hcard 스킵 상태 진입 */
+@keyframes hcard-skip-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* 홈 스킵 카드 섹션 진입 */
+@keyframes skip-card-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* 카드 fade-out (스킵 시) */
+@keyframes fade-up-out {
+  from { opacity: 1; transform: translateY(0);   }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+
+/* 로그인 로딩 스피너 */
+@keyframes spin-cw {
+  to { transform: rotate(360deg); }
+}
+
+/* 일반 fade-in */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 바텀시트 / 액션시트 슬라이드 업 */
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0);    }
+}
+
+/* 드로어 슬라이드 인 (좌→우) */
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0);     }
+}
+
+/* 토스트 진입 */
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* 로그인 로딩 스피너 */
+@keyframes login-spin {
+  to { transform: rotate(360deg); }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   8. COMPONENT UTILITIES
+   컴포넌트에서 @apply 또는 직접 className으로 사용
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── 스켈레톤 ── */
+.skel-bar {
+  display: block;
+  border-radius: 4px;
+  background: var(--color-skel);
+  animation: skel-shine 1.4s ease-in-out infinite;
+}
+
+/* ── 스피너 ── */
+.spinner {
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: var(--color-navy);
+  border-right-color: var(--color-navy);
+  animation: spin-cw 0.7s linear infinite;
+}
+
+/* ── 토스트 ── */
+.toast {
+  position: fixed;
+  left: 20px;
+  right: 20px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 34px);
+  background: rgba(17, 17, 17, 0.92);
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.4;
+  padding: 12px 14px;
+  border-radius: 12px;
+  z-index: var(--z-toast);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity var(--ease-base), transform var(--ease-base);
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── 바텀시트 핸들 바 ── */
+.sheet-handle-bar {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-line);
+  margin: 0 auto;
+}
+
+/* ── 오버레이 (드로어 / 시트 / 모달) ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: none;
+}
+.overlay.open { display: block; }
+
+/* ── 태그 · 라벨 ── */
+.tag-navy {                          /* 카테고리 라벨, PICK 라벨 */
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: var(--color-navy);
+  background: var(--color-navy-tint);
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.tag-neutral {                       /* 분류 태그, 필터 태그 */
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  color: var(--color-tag-fg);
+  background: var(--color-tag);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+/* ── 배지 ── */
+.badge-done {                        /* 시청 완료 */
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.badge-skipped {                     /* 스킵 */
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: var(--color-tag);
+  color: var(--color-tag-fg);
+}
+
+.badge-req {                         /* 약관 필수 */
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--color-navy-tint);
+  color: var(--color-navy);
+}
+
+.badge-opt {                         /* 약관 선택 */
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--color-tag);
+  color: var(--color-tag-fg);
+}
+
+/* ── 영상 썸네일 duration 배지 ── */
+.thumb-dur {
+  position: absolute;
+  bottom: 5px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── 텍스트 클램프 ── */
+.line-clamp-1 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── 섹션 헤더 레이블 (category-list, mypage 등) ── */
+.section-label-upper {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
+}
+
+/* ── 발견 노트 (discovery note) ── */
+.discovery-note {
+  background: #EEF4FF;
+  border-radius: var(--radius-app-sm);
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--color-accent);
+  line-height: 1.5;
+}
+
+/* ── 에디터 코멘트 박스 ── */
+.editor-comment-box {
+  background: var(--color-surface-sub);
+  border-radius: var(--radius-app-sm);
+  padding: 10px 12px;
+}
+
+/* ── 잠금 콘텐츠 blur 영역 ── */
+.lock-blur {
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   9. CAPACITOR / SAFE AREA  (하이브리드 앱)
+   iPhone 노치·Dynamic Island, Android 제스처 바 대응
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Safe area 패딩 유틸리티 */
+.pt-safe { padding-top:    env(safe-area-inset-top,    0px); }
+.pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.pl-safe { padding-left:   env(safe-area-inset-left,   0px); }
+.pr-safe { padding-right:  env(safe-area-inset-right,  0px); }
+.px-safe {
+  padding-left:  env(safe-area-inset-left,  0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+.py-safe {
+  padding-top:    env(safe-area-inset-top,    0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* 앱바가 safe-area 상단까지 확장될 때 */
+.app-bar-safe {
+  padding-top: calc(env(safe-area-inset-top, 0px) + 12px);
+}
+
+/* 하단 탭바가 safe-area 하단까지 확장될 때 */
+.bottom-nav-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   10. DARK MODE  보조 스타일  (CSS 변수로 처리 불가한 rgba 예외)
+   ══════════════════════════════════════════════════════════════════ */
+
+/* 오버레이 배경색 */
+[data-theme="dark"] .overlay {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* 카드 하트 버튼 배경 */
+[data-theme="dark"] .card-heart-btn {
+  background: rgba(30, 30, 30, 0.9);
+}
+
+/* 로딩 오버레이 */
+[data-theme="dark"] .login-loading-overlay {
+  background: rgba(17, 17, 17, 0.85);
+}
+
+/* iOS 알림 권한 팝업 다이얼로그 */
+[data-theme="dark"] .notif-perm-dialog {
+  background: rgba(44, 44, 46, 0.98);
+}
+
+/* 콘텐츠 잠금 그라디언트 오버레이 */
+[data-theme="dark"] .lock-overlay,
+[data-theme="dark"] .catlist-lock-overlay {
+  background: linear-gradient(to bottom, rgba(17, 17, 17, 0) 0%, #111111 30%);
+}
+
+/* 홈 스킵 카드 */
+[data-theme="dark"] .hcard-skipped-overlay {
+  background: rgba(20, 20, 20, 0.92);
+}
+
+/* restricted 상태 아이콘 박스 */
+[data-theme="dark"] .restricted-icon-box {
+  background: #2A2010;
+}
+
+/* restricted 상태 태그 */
+[data-theme="dark"] .restricted-status-tag {
+  background: #2A2010;
+  color: #F5A623;
+}
+
+[data-theme="dark"] .restricted-status-dot {
+  background: #F5A623;
+}
