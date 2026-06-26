@@ -7,7 +7,7 @@
      - 오늘의 추천 알림 → toggle
 
    앱 설정 (CMP-MY-006 · ThemeSegment 포함):
-     - 테마 밝게/어둡게
+     - 테마 밝게 / 어둡게 / 기기 설정
 
    초안 HTML 참조:
      .toggle w-44px h-26px rounded-[13px]
@@ -18,6 +18,13 @@
    ───────────────────────────────────────────────────────────────── */
 import { SettingSection, SettingRow } from './_shared';
 import { useThemeStore } from '@/store/themeStore';
+import type { Theme } from '@/types';
+
+const THEME_OPTIONS: { value: Theme; label: string }[] = [
+  { value: 'light', label: '밝게' },
+  { value: 'dark', label: '어둡게' },
+  { value: 'system', label: '기기 설정' },
+];
 
 interface Props {
   /** 관심사 요약 텍스트 ex) "브랜딩, 마케팅 외" */
@@ -53,33 +60,28 @@ function Toggle({ isOn, onToggle }: { isOn: boolean; onToggle: () => void }) {
 
 /* ─── ThemeSegment (CMP-MY-006) ───────────────────────────────── */
 function ThemeSegment() {
-  const { resolvedTheme, setTheme } = useThemeStore();
-  const isDark = resolvedTheme === 'dark';
+  const { theme, setTheme } = useThemeStore();
 
   return (
     <div className="flex bg-surface-sub rounded-[8px] p-[2px] gap-[2px]">
-      <button
-        className={[
-          'px-[14px] py-[4px] rounded-[6px] text-[13px] border-none transition-all duration-150 font-sans',
-          !isDark
-            ? 'bg-surface-card text-fg font-semibold shadow-[0_1px_4px_rgba(0,0,0,0.10)]'
-            : 'bg-transparent text-fg-subtle font-medium',
-        ].join(' ')}
-        onClick={() => setTheme('light')}
-      >
-        밝게
-      </button>
-      <button
-        className={[
-          'px-[14px] py-[4px] rounded-[6px] text-[13px] border-none transition-all duration-150 font-sans',
-          isDark
-            ? 'bg-surface-card text-fg font-semibold shadow-[0_1px_4px_rgba(0,0,0,0.10)]'
-            : 'bg-transparent text-fg-subtle font-medium',
-        ].join(' ')}
-        onClick={() => setTheme('dark')}
-      >
-        어둡게
-      </button>
+      {THEME_OPTIONS.map(({ value, label }) => {
+        const isActive = theme === value;
+        return (
+          <button
+            key={value}
+            type="button"
+            className={[
+              'px-[10px] py-[4px] rounded-[6px] text-[12px] border-none transition-all duration-150 font-sans whitespace-nowrap',
+              isActive
+                ? 'bg-surface-card text-fg font-semibold shadow-[0_1px_4px_rgba(0,0,0,0.10)]'
+                : 'bg-transparent text-fg-subtle font-medium',
+            ].join(' ')}
+            onClick={() => setTheme(value)}
+          >
+            {label}
+          </button>
+        );
+      })}
     </div>
   );
 }
