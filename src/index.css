@@ -598,6 +598,10 @@
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+/* fixed/absolute 요소 — safe-area 상단 + 오프셋 */
+.top-safe-3 { top: calc(env(safe-area-inset-top, 0px) + 12px); }
+.top-safe-12 { top: calc(env(safe-area-inset-top, 0px) + 48px); }
+
 /* 앱바가 safe-area 상단까지 확장될 때 */
 .app-bar-safe {
   padding-top: calc(env(safe-area-inset-top, 0px) + 12px);

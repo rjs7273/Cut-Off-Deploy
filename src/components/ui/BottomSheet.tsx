@@ -140,7 +140,7 @@ export default function BottomSheet({
           'fixed left-0 right-0 bottom-0',
           sheetZ,
           'flex flex-col bg-surface',
-          isFull ? 'top-0' : 'max-h-[92dvh]',
+          isFull ? 'top-0 pt-safe' : 'max-h-[92dvh]',
           'rounded-t-[22px]',
           'transition-transform duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]',
           isOpen ? 'translate-y-0' : 'translate-y-full',
@@ -169,7 +169,9 @@ export default function BottomSheet({
               'absolute right-4 z-10',
               'w-[36px] h-[36px] flex items-center justify-center',
               'text-fg-muted',
-              showHandle ? 'top-[48px]' : 'top-3',
+              isFull
+                ? (showHandle ? 'top-safe-12' : 'top-safe-3')
+                : (showHandle ? 'top-[48px]' : 'top-3'),
             ].join(' ')}
             aria-label="닫기"
             onClick={onClose}
