@@ -1,8 +1,8 @@
 import { getCategoryLabel } from '@/data/categoryList';
-import { toDurationLabel, thumbnailBackground } from '@/data/utils';
+import { toDurationLabel } from '@/data/utils';
+import YoutubeEmbed from '@/components/video/YoutubeEmbed';
 import type { VideoCard } from '@/types/video';
-import type { VideoDetailSource } from '@/components/video/VideoDetailBottomSheet';
-
+import type { VideoDetailSource } from '@/types/videoDetail';
 const SECONDARY_LABEL: Record<VideoDetailSource, string | null> = {
   history: '시청 기록 제거',
   home:    '오늘은 안 볼래요',
@@ -15,7 +15,6 @@ interface VideoDetailContentProps {
   source: VideoDetailSource;
   isSaved: boolean;
   onSave: () => void;
-  onWatch: () => void;
   onSkip?: () => void;
 }
 
@@ -24,10 +23,8 @@ export default function VideoDetailContent({
   source,
   isSaved,
   onSave,
-  onWatch,
   onSkip,
-}: VideoDetailContentProps) {
-  const secondaryLabel = SECONDARY_LABEL[source];
+}: VideoDetailContentProps) {  const secondaryLabel = SECONDARY_LABEL[source];
 
   return (
     <div className="px-5 pt-4 pb-6 flex flex-col">
@@ -52,21 +49,7 @@ export default function VideoDetailContent({
         </p>
       </div>
 
-      <button
-        type="button"
-        onClick={onWatch}
-        className="w-full aspect-video rounded-app-md mb-4 flex items-center justify-center relative overflow-hidden"
-        style={{ background: thumbnailBackground(video) }}
-        aria-label="영상 보기"
-      >
-        <div className="w-12 h-12 bg-white/85 rounded-full flex items-center justify-center text-[18px]">
-          ▶
-        </div>
-        <span className="absolute bottom-2 right-2.5 bg-black/70 text-white text-[11px] font-medium px-[7px] py-[2px] rounded-[4px]">
-          {video.duration}
-        </span>
-      </button>
-
+      <YoutubeEmbed videoId={video.id} title={video.title} />
       <div className="mb-[14px]">
         <p className="text-[11px] font-bold text-navy tracking-[0.5px] uppercase mb-[6px]">
           영상 요약

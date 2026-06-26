@@ -2,6 +2,7 @@ import { useReducer, useEffect } from 'react';
 import type { WatchHistoryGroup } from '@/types/video';
 import { loadHistory, removeHistoryEntry } from '@/api/services/history';
 import { toggleSaveVideo } from '@/api/services/saved';
+import { useHistoryStore } from '@/store/historyStore';
 
 type State = {
   groups: WatchHistoryGroup[];
@@ -44,7 +45,17 @@ function reducer(state: State, action: Action): State {
   }
 }
 
+async function fetchGroups(): Promise<WatchHistoryGroup[]> {
+  const { groups } = await loadHistory();
+  return groups;
+}
+
 export function useWatchHistory(isLoggedIn: boolean) {
+  const watchedVideoIds = useHistoryStore((s) => s.watchedVideoIds);
+  const watchedStoreKey = watchedVideoIds
+    .map((e) => `${e.id}:${e.watchedDate}:${e.watchedTime}`)
+    .join('|');
+
   const [state, dispatch] = useReducer(reducer, {
     groups: [],
     isLoading: false,
@@ -57,8 +68,8 @@ export function useWatchHistory(isLoggedIn: boolean) {
     let cancelled = false;
     dispatch({ type: 'FETCH_START' });
 
-    loadHistory()
-      .then(({ groups }) => {
+    fetchGroups()
+      .then((groups) => {
         if (!cancelled) dispatch({ type: 'FETCH_SUCCESS', payload: groups });
       })
       .catch(() => {
@@ -70,11 +81,32 @@ export function useWatchHistory(isLoggedIn: boolean) {
     return () => {
       cancelled = true;
     };
-  }, [isLoggedIn]);
+  }, [isLoggedIn, watchedStoreKey]);
 
-  function deleteItem(historyId: string) {
+  async function reloadHistory() {
+    dispatch({ type: 'FETCH_START' });
+    try {
+      const groups = await fetchGroups();
+      dispatch({ type: 'FETCH_SUCCESS', payload: groups });
+    } catch {
+      dispatch({ type: 'FETCH_ERROR', payload: '시청 기록을 불러오지 못했습니다.' });
+    }
+  }
+
+  async function deleteItem(historyId: string) {
     dispatch({ type: 'DELETE_ITEM', id: historyId });
-    removeHistoryEntry(historyId).catch(() => {});
+    try {
+      await removeHistoryEntry(historyId);
+      const groups = await fetchGroups();
+      dispatch({ type: 'FETCH_SUCCESS', payload: groups });
+    } catch {
+      try {
+        const groups = await fetchGroups();
+        dispatch({ type: 'FETCH_SUCCESS', payload: groups });
+      } catch {
+        dispatch({ type: 'FETCH_ERROR', payload: '시청 기록을 삭제하지 못했습니다.' });
+      }
+    }
   }
 
   function setSaved(historyId: string, isSaved: boolean) {
@@ -89,6 +121,7 @@ export function useWatchHistory(isLoggedIn: boolean) {
     isLoading: state.isLoading,
     error: state.error,
     deleteItem,
+    reloadHistory,
     setSaved,
   };
 }

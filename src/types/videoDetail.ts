@@ -1,6 +1,7 @@
 import { useSavedStore } from '@/store/savedStore';
 import type { VideoCard } from '@/types/video';
-import type { VideoDetailSource } from '@/components/video/VideoDetailBottomSheet';
+
+export type VideoDetailSource = 'history' | 'home' | 'catlist' | 'saved';
 
 /** VideoDetailPage 진입 시 location.state */
 export interface VideoDetailLocationState {

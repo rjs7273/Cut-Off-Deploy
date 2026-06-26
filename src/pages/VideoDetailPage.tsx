@@ -4,7 +4,6 @@ import { useNavigate, useParams, useSearchParams, useLocation } from 'react-rout
 import PageContainer from '@/components/layout/PageContainer';
 import VideoDetailHeader from '@/components/video/VideoDetailHeader';
 import VideoDetailContent from '@/components/video/VideoDetailContent';
-import YoutubePlayer from '@/components/video/YoutubePlayer';
 import SkipActionSheet from '@/components/home/SkipActionSheet';
 import EmptyState from '@/components/ui/EmptyState';
 
@@ -15,7 +14,7 @@ import { useVideoSave } from '@/hooks/useVideoSave';
 import { useOverlayStore } from '@/store/overlayStore';
 import { useSavedStore } from '@/store/savedStore';
 import type { VideoCard } from '@/types/video';
-import type { VideoDetailSource } from '@/components/video/VideoDetailBottomSheet';
+import type { VideoDetailSource } from '@/types/videoDetail';
 import {
   type VideoDetailLocationState,
   type VideoDetailReturnState,
@@ -52,7 +51,6 @@ export default function VideoDetailPage() {
   );
   const [isLoading, setIsLoading] = useState(!locationState.video);
   const [error, setError] = useState<string | null>(null);
-  const [playerOpen, setPlayerOpen] = useState(false);
   const [skipActionOpen, setSkipActionOpen] = useState(false);
 
   useEffect(() => {
@@ -163,10 +161,6 @@ export default function VideoDetailPage() {
     handleSaveToggle(video.id, isSaved, applySavedChange);
   }, [video, isSaved, handleSaveToggle, applySavedChange]);
 
-  const handleWatch = useCallback(() => {
-    setPlayerOpen(true);
-  }, []);
-
   const handleBack = useCallback(() => {
     const returnPath = VIDEO_DETAIL_RETURN_PATH[source];
     const pending = pendingReturnRef.current;
@@ -246,16 +240,9 @@ export default function VideoDetailPage() {
           source={source}
           isSaved={isSaved}
           onSave={handleSave}
-          onWatch={handleWatch}
           onSkip={source !== 'saved' ? handleSkip : undefined}
         />
       )}
-
-      <YoutubePlayer
-        isOpen={playerOpen}
-        video={video}
-        onClose={() => setPlayerOpen(false)}
-      />
 
       {source === 'home' && (
         <SkipActionSheet

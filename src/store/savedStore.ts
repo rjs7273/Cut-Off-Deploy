@@ -5,7 +5,7 @@
    사용처:
      - 읽기:   useSavedVideos, useHome, SavedPage, HistoryPage,
                CategoryListPage, SaveFolderBottomSheet
-     - 쓰기:   toggleSave, saveToFolder, addFolder (VideoDetailBottomSheet 등)
+     - 쓰기:   toggleSave, saveToFolder, addFolder (VideoDetailPage 등)
      - 초기화: authStore.logout()
    ───────────────────────────────────────────────────────────────── */
 import { create } from 'zustand';

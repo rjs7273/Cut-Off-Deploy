@@ -45,7 +45,10 @@ export async function mockFetchHistory(): Promise<{ groups: WatchHistoryGroup[] 
   }
 
   const groups: WatchHistoryGroup[] = [];
-  for (const [date, entries] of groupMap) {
+  const sortedDates = [...groupMap.keys()].sort((a, b) => b.localeCompare(a));
+
+  for (const date of sortedDates) {
+    const entries = groupMap.get(date) ?? [];
     const items: WatchHistoryItem[] = entries
       .map((entry) => {
         const video = mapCatalogVideoToCard(entry.id, savedIds.has(entry.id));

@@ -30,18 +30,26 @@ export default function HistoryPage() {
     const returnState = location.state as HistoryReturnState | null;
     if (!returnState?.historyDeleted && !returnState?.historySaved) return;
 
-    if (returnState.historyDeleted) {
-      deleteItem(returnState.historyDeleted);
-      showToast('시청 기록에서 삭제됐습니다.');
-    }
+    let cancelled = false;
 
-    if (returnState.historySaved) {
-      setSaved(returnState.historySaved.historyId, returnState.historySaved.isSaved);
-    }
+    (async () => {
+      if (returnState.historyDeleted) {
+        await deleteItem(returnState.historyDeleted);
+        if (!cancelled) showToast('시청 기록에서 삭제됐습니다.');
+      }
 
-    if (returnState.historyDeleted || returnState.historySaved) {
-      navigate(location.pathname, { replace: true, state: null });
-    }
+      if (returnState.historySaved) {
+        setSaved(returnState.historySaved.historyId, returnState.historySaved.isSaved);
+      }
+
+      if (!cancelled) {
+        navigate(location.pathname, { replace: true, state: null });
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [location.state, location.pathname, navigate, deleteItem, setSaved, showToast]);
 
   function handleOpenDetail(item: WatchHistoryItem) {
