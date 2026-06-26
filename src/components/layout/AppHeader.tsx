@@ -59,7 +59,7 @@ export default function AppHeader({
         .filter(Boolean)
         .join(' ')}
     >
-      <div className="flex items-center justify-between h-[56px] px-5">
+      <div className="flex items-center justify-between h-app-bar px-5">
       {/* ── 좌측 영역 ── */}
       <div className="flex items-center min-w-[40px]">
         {/* Home variant: 햄버거 메뉴 */}

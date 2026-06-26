@@ -22,7 +22,7 @@ export default function VideoDetailHeader({ onBack, onShare }: VideoDetailHeader
         'bg-surface border-b border-line',
       ].join(' ')}
     >
-      <div className="flex items-center justify-between h-[56px] px-5">
+      <div className="flex items-center justify-between h-app-bar px-5">
         <div className="flex items-center min-w-[40px]">
           <button
             type="button"

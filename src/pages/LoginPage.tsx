@@ -40,7 +40,7 @@ export default function LoginPage() {
   return (
     <div className="flex flex-col bg-surface overflow-hidden" style={{ height: '100dvh' }}>
       <header className="flex-shrink-0 pt-safe bg-surface border-b border-line">
-        <div className="h-[56px] flex items-center justify-between px-5">
+        <div className="h-app-bar flex items-center justify-between px-5">
         <div className="w-9" />
         <span className="text-[18px] font-bold text-fg tracking-[-0.5px] select-none">
           Cut<span className="text-navy">-off</span>
