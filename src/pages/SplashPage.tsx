@@ -50,7 +50,7 @@ export default function SplashPage() {
         Cut<span className="text-navy">-off</span>
       </h1>
       <p className="text-[15px] text-fg-muted tracking-[0.2px] mt-3 select-none">
-        오늘 볼 만한 영상 하나
+        테스트 문구입니다
       </p>
       {isCheckingUser && (
         <div
