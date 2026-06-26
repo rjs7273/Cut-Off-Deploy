@@ -3,8 +3,10 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
 import { setupApiAuth } from '@/lib/setupApiAuth';
+import { initTheme } from '@/store/themeStore';
 
 setupApiAuth();
+initTheme();
 
 // Service Worker 등록 - 웹(PWA) 환경에서만 활성화
 // Capacitor 앱으로 실행 중일 때는 SW를 건너뜀

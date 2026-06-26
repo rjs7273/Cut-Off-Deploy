@@ -6,16 +6,11 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { router } from './router';
 import { queryClient } from './lib/queryClient';
-import { initTheme } from './store/themeStore';
 import { syncSubscriptionStatus } from '@/api/services/subscription';
 import { useAuthStore } from '@/store/authStore';
 import { setupPushNotificationActionRouting } from '@/lib/pushNotifications';
 
 export default function App() {
-  useEffect(() => {
-    initTheme();
-  }, []);
-
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
 

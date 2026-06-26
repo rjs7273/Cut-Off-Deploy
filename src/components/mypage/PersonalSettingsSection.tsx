@@ -53,8 +53,8 @@ function Toggle({ isOn, onToggle }: { isOn: boolean; onToggle: () => void }) {
 
 /* ─── ThemeSegment (CMP-MY-006) ───────────────────────────────── */
 function ThemeSegment() {
-  const { theme, setTheme } = useThemeStore();
-  const isDark = theme === 'dark';
+  const { resolvedTheme, setTheme } = useThemeStore();
+  const isDark = resolvedTheme === 'dark';
 
   return (
     <div className="flex bg-surface-sub rounded-[8px] p-[2px] gap-[2px]">
