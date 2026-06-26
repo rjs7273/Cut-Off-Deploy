@@ -2,6 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Menu, Bell, User } from 'lucide-react';
 import { useOverlayStore } from '@/store/overlayStore';
 import type { AppHeaderProps } from '@/types/layout';
+import logoDark from '@/assets/logo-dark.svg';
+import logoWhite from '@/assets/logo-white.svg';
+import { useThemeStore } from '@/store/themeStore';
 
 /* ─────────────────────────────────────────────────────────────────
    AppHeader  (CMP-APP-003)
@@ -32,6 +35,7 @@ export default function AppHeader({
 }: AppHeaderProps) {
   const navigate = useNavigate();
   const openDrawer = useOverlayStore((s) => s.openDrawer);
+  const resolvedTheme = useThemeStore((s) => s.resolvedTheme);
 
   function handleBack() {
     if (onBack) onBack();
@@ -99,14 +103,18 @@ export default function AppHeader({
       {/* ── 중앙 영역 ── */}
       <div className="flex-1 flex items-center justify-center">
         {variant === 'home' ? (
-          /* 홈: 로고 타이포 — 탭 시 메인 홈으로 이동 */
+          /* 홈: 로고 이미지 — 탭 시 메인 홈으로 이동 */
           <button
             type="button"
-            className="text-[18px] font-bold text-fg tracking-[-0.5px] bg-transparent border-0 p-0 cursor-pointer"
+            className="bg-transparent border-0 p-0 cursor-pointer flex items-center"
             aria-label="홈으로 이동"
             onClick={() => navigate('/home')}
           >
-            Cut<span className="text-navy">-off</span>
+            <img
+              src={resolvedTheme === 'dark' ? logoWhite : logoDark}
+              alt="CUT-OFF"
+              className="h-[22px] w-auto"
+            />
           </button>
         ) : (
           /* 기본: 페이지 제목 */
