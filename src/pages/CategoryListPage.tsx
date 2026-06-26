@@ -1,24 +1,20 @@
-import { useState, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import PageContainer from '@/components/layout/PageContainer';
 import AppHeader from '@/components/layout/AppHeader';
 import CategoryFilterChips from '@/components/category/CategoryFilterChips';
 import CategoryVideoList from '@/components/category/CategoryVideoList';
 import CategoryLockOverlay from '@/components/category/CategoryLockOverlay';
-import VideoDetailBottomSheet from '@/components/video/VideoDetailBottomSheet';
-import YoutubePlayer from '@/components/video/YoutubePlayer';
 import { getCategoryLabel } from '@/data/categoryList';
 import { useCategoryList } from '@/hooks/useCategoryList';
 import { useAuthStore } from '@/store/authStore';
 import { useOverlayStore } from '@/store/overlayStore';
-import { toggleSaveVideo } from '@/api/services/saved';
-import { useSavedStore } from '@/store/savedStore';
 import type { CategoryGroup, CategoryItem } from '@/types/catlist';
-import type { VideoCard } from '@/types/video';
 import { resolveUserTier } from '@/types/userTier';
 
 export default function CategoryListPage() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const isLoggedIn   = useAuthStore((s) => s.isLoggedIn);
@@ -34,33 +30,9 @@ export default function CategoryListPage() {
   const { meta, filteredItems, selectedFilter, isLoading, error, setFilter } =
     useCategoryList(group, initialFilter);
 
-  const savedVideoIds = useSavedStore((s) => s.savedVideoIds);
-
-  const [selectedVideo, setSelectedVideo] = useState<VideoCard | null>(null);
-  const [playerVideo, setPlayerVideo] = useState<VideoCard | null>(null);
-  const [savedIds, setSavedIds] = useState(() => new Set(savedVideoIds.map((s) => s.id)));
-
-  const handleClickItem = useCallback((item: CategoryItem) => {
-    setSelectedVideo(item);
-  }, []);
-
-  const handleCloseSheet = useCallback(() => setSelectedVideo(null), []);
-
-  const handleToggleSave = useCallback(() => {
-    if (!selectedVideo) return;
-    toggleSaveVideo(selectedVideo.id).then((isSaved) => {
-      setSavedIds((prev) => {
-        const next = new Set(prev);
-        if (isSaved) next.add(selectedVideo.id);
-        else next.delete(selectedVideo.id);
-        return next;
-      });
-    });
-  }, [selectedVideo]);
-  const handleWatch = useCallback(() => {
-    if (selectedVideo) setPlayerVideo(selectedVideo);
-  }, [selectedVideo]);
-  const handleSkip  = useCallback(() => setSelectedVideo(null), []);
+  const openVideoDetail = useCallback((item: CategoryItem) => {
+    navigate(`/video/${item.id}?source=catlist`, { state: { video: item } });
+  }, [navigate]);
 
   const handleSubscribe = useCallback(() => {
     if (userTier === 'guest') openLoginUpsellSheet('catlist');
@@ -129,7 +101,7 @@ export default function CategoryListPage() {
               <CategoryVideoList
                 items={filteredItems}
                 blurred={isLocked}
-                onClickItem={handleClickItem}
+                onClickItem={openVideoDetail}
               />
 
               {isLocked && (
@@ -142,23 +114,6 @@ export default function CategoryListPage() {
           )}
         </div>
       </div>
-
-      <VideoDetailBottomSheet
-        isOpen={selectedVideo !== null}
-        video={selectedVideo}
-        source="catlist"
-        isSaved={selectedVideo ? savedIds.has(selectedVideo.id) : false}
-        onClose={handleCloseSheet}
-        onSave={handleToggleSave}
-        onWatch={handleWatch}
-        onSkip={handleSkip}
-      />
-
-      <YoutubePlayer
-        isOpen={playerVideo !== null}
-        video={playerVideo}
-        onClose={() => setPlayerVideo(null)}
-      />
     </PageContainer>
   );
 }

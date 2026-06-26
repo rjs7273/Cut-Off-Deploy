@@ -25,6 +25,8 @@ interface SavedState {
   saveToFolder: (videoId: string, folderId: string) => void;
   /** 새 폴더 생성 */
   addFolder: (name: string) => FolderEntry;
+  /** 사용자 폴더 삭제 (전체 폴더는 삭제 불가, 영상은 저장 목록에 유지) */
+  deleteFolder: (folderId: string) => void;
   /** 로그아웃 시 전체 초기화 */
   reset: () => void;
   /** 로그인 후 서버 데이터 복원 */
@@ -93,6 +95,11 @@ export const useSavedStore = create<SavedState>()(
         };
         set({ folders: [...folders, entry] });
         return entry;
+      },
+
+      deleteFolder: (folderId) => {
+        if (folderId === ALL_FOLDER_ID) return;
+        set({ folders: get().folders.filter((f) => f.id !== folderId) });
       },
 
       reset: () => {

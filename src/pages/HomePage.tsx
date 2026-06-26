@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import PageContainer from '@/components/layout/PageContainer';
 import AppHeader from '@/components/layout/AppHeader';
@@ -6,19 +7,22 @@ import HomeSkeleton from '@/components/home/HomeSkeleton';
 import TodayPickCard from '@/components/home/TodayPickCard';
 import SkippedCard from '@/components/home/SkippedCard';
 import OtherSection from '@/components/home/OtherSection';
-import SkipActionSheet from '@/components/home/SkipActionSheet';
 import RestoreModal from '@/components/home/RestoreModal';
-import VideoDetailBottomSheet from '@/components/video/VideoDetailBottomSheet';
-import YoutubePlayer from '@/components/video/YoutubePlayer';
 
-import { skipVideoRecommendation, restoreVideoRecommendation } from '@/api/services/recommendations';
+import { restoreVideoRecommendation } from '@/api/services/recommendations';
 import { useHome } from '@/hooks/useHome';
 import type { VideoCard } from '@/types/video';
 import { resolveUserTier } from '@/types/userTier';
 import { useOverlayStore } from '@/store/overlayStore';
 import { useAuthStore } from '@/store/authStore';
 
+import type { VideoDetailReturnState } from '@/types/videoDetail';
+
+interface HomeReturnState extends VideoDetailReturnState {}
+
 export default function HomePage() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const isLoggedIn   = useAuthStore((s) => s.isLoggedIn);
   const isSubscribed = useAuthStore((s) => s.isSubscribed);
   const userTier = resolveUserTier(isLoggedIn, isSubscribed);
@@ -34,36 +38,36 @@ export default function HomePage() {
     skipPick,
     restorePick,
     toggleSave,
+    setSaved,
     skipOther,
     restoreOther,
   } = useHome();
 
-  const [sheetVideo, setSheetVideo]         = useState<VideoCard | null>(null);
-  const [playerVideo, setPlayerVideo]       = useState<VideoCard | null>(null);
-  const [skipActionOpen, setSkipActionOpen] = useState(false);
   const [restoreModalOpen, setRestoreModalOpen] = useState(false);
 
-  const openSheet = useCallback((video: VideoCard) => {
-    setSheetVideo(video);
-  }, []);
-  const closeSheet = useCallback(() => setSheetVideo(null), []);
+  const openVideoDetail = useCallback((video: VideoCard, homeSkipContext?: 'pick' | 'other') => {
+    navigate(`/video/${video.id}?source=home`, { state: { video, homeSkipContext } });
+  }, [navigate]);
+
+  useEffect(() => {
+    const returnState = location.state as HomeReturnState | null;
+    if (!returnState?.homeSkip && !returnState?.homeSaved) return;
+
+    if (returnState.homeSkip) {
+      if (returnState.homeSkip.type === 'pick') skipPick();
+      else skipOther(returnState.homeSkip.videoId);
+    }
+
+    if (returnState.homeSaved) {
+      setSaved(returnState.homeSaved.videoId, returnState.homeSaved.isSaved);
+    }
+
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.state, location.pathname, navigate, skipPick, skipOther, setSaved]);
 
   const handleClickPick = useCallback(() => {
-    if (todaysPick) openSheet(todaysPick);
-  }, [todaysPick, openSheet]);
-
-  const handleSkipFromSheet = useCallback(() => {
-    closeSheet();
-    setSkipActionOpen(true);
-  }, [closeSheet]);
-
-  const handleSelectSkipReason = useCallback((reason: string) => {
-    setSkipActionOpen(false);
-    skipPick();
-    if (todaysPick) {
-      skipVideoRecommendation(todaysPick.id, reason).catch(() => {});
-    }
-  }, [skipPick, todaysPick]);
+    if (todaysPick) openVideoDetail(todaysPick, 'pick');
+  }, [todaysPick, openVideoDetail]);
 
   const handleClickRestore = useCallback(() => {
     setRestoreModalOpen(true);
@@ -116,7 +120,7 @@ export default function HomePage() {
             savedIds={savedIds}
             skippedOtherIds={skippedOtherIds}
             userTier={userTier}
-            onClickCard={openSheet}
+            onClickCard={(video) => openVideoDetail(video, 'other')}
             onToggleSave={toggleSave}
             onSkipOther={skipOther}
             onRestoreOther={restoreOther}
@@ -126,31 +130,6 @@ export default function HomePage() {
           <div className="h-8" />
         </div>
       )}
-
-      <VideoDetailBottomSheet
-        isOpen={sheetVideo !== null}
-        video={sheetVideo}
-        source="home"
-        isSaved={sheetVideo ? savedIds.has(sheetVideo.id) : false}
-        onClose={closeSheet}
-        onSave={() => sheetVideo && toggleSave(sheetVideo.id)}
-        onWatch={() => {
-          if (sheetVideo) setPlayerVideo(sheetVideo);
-        }}
-        onSkip={handleSkipFromSheet}
-      />
-
-      <YoutubePlayer
-        isOpen={playerVideo !== null}
-        video={playerVideo}
-        onClose={() => setPlayerVideo(null)}
-      />
-
-      <SkipActionSheet
-        isOpen={skipActionOpen}
-        onClose={() => setSkipActionOpen(false)}
-        onSelectReason={handleSelectSkipReason}
-      />
 
       <RestoreModal
         isOpen={restoreModalOpen}

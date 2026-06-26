@@ -28,6 +28,7 @@ export default function CategoryPage() {
   const navigate    = useNavigate();
   const [searchParams] = useSearchParams();
   const isLoggedIn  = useAuthStore((s) => s.isLoggedIn);
+  const isSubscribed = useAuthStore((s) => s.isSubscribed);
   const showToast   = useOverlayStore((s) => s.showToast);
   const storedCategories = useUserPrefsStore((s) => s.selectedCategories);
   const setSelectedCategories = useUserPrefsStore((s) => s.setSelectedCategories);
@@ -43,18 +44,18 @@ export default function CategoryPage() {
 
   const handleToggle = useCallback((id: string) => {
     setSelectedIds((prev) => {
-      /* 구독 모드이거나 로그인 상태 → 다중 선택 */
-      if (isSubscribeMode || isLoggedIn) {
+      /* 구독 모드이거나 구독자 → 다중 선택 */
+      if (isSubscribeMode || isSubscribed) {
         const next = new Set(prev);
         if (next.has(id)) next.delete(id);
         else next.add(id);
         return next;
       }
-      /* 비로그인 온보딩 → 단일 선택 */
+      /* 비회원·비구독자 → 단일 선택 */
       if (prev.has(id)) return new Set();
       return new Set([id]);
     });
-  }, [isSubscribeMode, isLoggedIn]);
+  }, [isSubscribeMode, isSubscribed]);
 
   const count = selectedIds.size;
   /* 구독 모드는 3개↑, 온보딩은 1개↑ */
@@ -103,12 +104,12 @@ export default function CategoryPage() {
     if (count === 0) {
       return isSubscribeMode
         ? '관심사를 3개 이상 선택해 주세요'
-        : (isLoggedIn ? '관심사를 선택해 주세요' : '관심 주제 1개를 선택해 주세요');
+        : (isSubscribed ? '관심사를 선택해 주세요' : '관심 주제 1개를 선택해 주세요');
     }
     if (isSubscribeMode) {
       return count >= 3 ? `${count}개 선택됨` : `${count}개 선택됨 (3개 이상 필요)`;
     }
-    return isLoggedIn ? `${count}개 선택됨` : `${getCategoryLabel([...selectedIds][0])} 선택됨`;
+    return isSubscribed ? `${count}개 선택됨` : `${getCategoryLabel([...selectedIds][0])} 선택됨`;
   })();
 
   return (

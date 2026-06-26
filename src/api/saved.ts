@@ -31,3 +31,8 @@ export async function createFolder(name: string): Promise<FolderEntry> {
   const { data } = await apiClient.post<FolderEntry>('/saved/folders', { name });
   return data;
 }
+
+export async function deleteFolder(folderId: string): Promise<{ success: boolean }> {
+  const { data } = await apiClient.delete<{ success: boolean }>(`/saved/folders/${folderId}`);
+  return data;
+}

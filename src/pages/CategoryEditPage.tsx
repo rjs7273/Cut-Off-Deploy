@@ -31,6 +31,7 @@ export default function CategoryEditPage() {
   const navigate   = useNavigate();
   const showToast  = useOverlayStore((s) => s.showToast);
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const isSubscribed = useAuthStore((s) => s.isSubscribed);
   const storedCategories = useUserPrefsStore((s) => s.selectedCategories);
   const setSelectedCategories = useUserPrefsStore((s) => s.setSelectedCategories);
 
@@ -41,19 +42,18 @@ export default function CategoryEditPage() {
 
   const handleToggle = useCallback((id: string) => {
     setSelectedIds((prev) => {
-      if (isLoggedIn) {
-        /* 로그인: 다중 선택 */
+      if (isSubscribed) {
+        /* 구독자: 다중 선택 */
         const next = new Set(prev);
         if (next.has(id)) next.delete(id);
         else next.add(id);
         return next;
-      } else {
-        /* 비로그인: 단일 선택 */
-        if (prev.has(id)) return new Set();
-        return new Set([id]);
       }
+      /* 비회원·비구독자: 단일 선택 */
+      if (prev.has(id)) return new Set();
+      return new Set([id]);
     });
-  }, [isLoggedIn]);
+  }, [isSubscribed]);
 
   const count = selectedIds.size;
   const canSave = count >= 1;
@@ -116,8 +116,8 @@ export default function CategoryEditPage() {
         <div className="mt-auto pt-4">
           <p className="text-[13px] text-fg-muted mb-3 text-center">
             {count === 0
-              ? (isLoggedIn ? '관심사를 선택해 주세요' : '관심 주제 1개를 선택해 주세요')
-              : (isLoggedIn ? `${count}개 선택됨` : `${getCategoryLabel([...selectedIds][0])} 선택됨`)}
+              ? (isSubscribed ? '관심사를 선택해 주세요' : '관심 주제 1개를 선택해 주세요')
+              : (isSubscribed ? `${count}개 선택됨` : `${getCategoryLabel([...selectedIds][0])} 선택됨`)}
           </p>
 
           <button

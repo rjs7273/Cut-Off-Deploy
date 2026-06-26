@@ -4,12 +4,14 @@ import {
   saveVideo,
   unsaveVideo,
   createFolder,
+  deleteFolder,
 } from '@/api/saved';
 import { useSavedStore } from '@/store/savedStore';
 import {
   mockFetchSaved,
   mockToggleSave,
   mockCreateFolder,
+  mockDeleteFolder,
 } from '@/api/mocks/savedMock';
 import type { SavedVideo, Folder } from '@/types/saved';
 
@@ -46,4 +48,13 @@ export async function addSavedFolder(name: string): Promise<Folder> {
   }
   const entry = await createFolder(name);
   return { id: entry.id, name: entry.name, count: 0 };
+}
+
+export async function deleteSavedFolder(folderId: string): Promise<void> {
+  if (isMockApi()) {
+    mockDeleteFolder(folderId);
+    return;
+  }
+  await deleteFolder(folderId);
+  useSavedStore.getState().deleteFolder(folderId);
 }

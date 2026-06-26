@@ -6,7 +6,7 @@ import {
   withdraw as apiWithdraw,
   fetchMe,
 } from '@/api/auth';
-import { mockLogin, mockLogout } from '@/api/mocks/authMock';
+import { mockLogin, mockLogout, mockRestoreSession, mockWithdrawUser } from '@/api/mocks/authMock';
 import { setAccessToken } from '@/lib/apiClient';
 import { applyMeResponse } from '@/lib/applyMeResponse';
 import { useAuthStore } from '@/store/authStore';
@@ -55,6 +55,21 @@ function applyMockRecord(
   useAuthStore.getState().setSubscribed(record.isSubscribed, record.subscribedAt ?? undefined);
 }
 
+/** 온보딩(최초 진입) 시 stale auth만 제거 — prefs(관심사·isFirstEntry)는 유지 */
+export function clearAuthSessionOnly(): void {
+  setAccessToken(null);
+  useAuthStore.setState({
+    isLoggedIn: false,
+    isSubscribed: false,
+    plan: 'FREE',
+    userInfo: null,
+    subscribedAt: null,
+    accessToken: null,
+    refreshToken: null,
+    expiresAt: null,
+  });
+}
+
 function clearSessionState(): void {
   useSavedStore.getState().reset();
   useHistoryStore.getState().reset();
@@ -81,6 +96,10 @@ export async function loginWithProvider(
     const baseInfo = buildMockUserInfo(provider);
     const record = await mockLogin(baseInfo.userId, baseInfo, guestState);
     applyMockRecord(record);
+    useAuthStore.getState().setSessionTokens({
+      accessToken: `mock_${baseInfo.userId}`,
+      refreshToken: `mock_refresh_${baseInfo.userId}`,
+    });
     return;
   }
 
@@ -131,20 +150,38 @@ export async function performLogout(): Promise<void> {
 }
 
 export async function performWithdraw(): Promise<void> {
-  if (!isMockApi()) {
+  const { userInfo } = useAuthStore.getState();
+
+  if (isMockApi()) {
+    if (userInfo?.userId) {
+      await mockWithdrawUser(userInfo.userId);
+    }
+  } else {
     await apiWithdraw();
   }
-  await performLogout();
+
+  clearSessionState();
 }
 
-/** Splash — accessToken 있으면 Me 검증. 성공 true, 실패 false */
+/** Splash — accessToken으로 세션 복원. 성공 true, 토큰 없음/실패 false */
 export async function bootstrapSession(): Promise<boolean> {
-  if (isMockApi()) {
-    return useAuthStore.getState().isLoggedIn;
-  }
-
   const { accessToken } = useAuthStore.getState();
   if (!accessToken) return false;
+
+  if (isMockApi()) {
+    const userId = useAuthStore.getState().userInfo?.userId;
+    if (!userId) {
+      clearAuthSessionOnly();
+      return false;
+    }
+    const record = mockRestoreSession(userId);
+    if (!record) {
+      clearAuthSessionOnly();
+      return false;
+    }
+    applyMockRecord(record);
+    return true;
+  }
 
   try {
     const me = await fetchMe();

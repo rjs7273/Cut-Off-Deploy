@@ -6,3 +6,4 @@ export * from './saved';
 export * from './history';
 export * from './feedback';
 export * from './subscription';
+export * from './videos';

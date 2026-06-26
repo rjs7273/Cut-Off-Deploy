@@ -21,4 +21,7 @@ export function applyMeResponse(me: MeResponse): void {
     selectedCategories: interests,
     notificationEnabled,
   });
+  if (me.onboardingDone) {
+    useUserPrefsStore.getState().setIsFirstEntry(false);
+  }
 }

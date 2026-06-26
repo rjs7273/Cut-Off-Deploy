@@ -1,20 +1,32 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@/store/authStore';
 import { useUserPrefsStore } from '@/store/userPrefsStore';
-import { bootstrapSession } from '@/api/services/auth';
+import { bootstrapSession, clearAuthSessionOnly } from '@/api/services/auth';
 import { syncSubscriptionStatus } from '@/api/services/subscription';
+import { waitForStoreHydration } from '@/lib/storeHydration';
 
 export default function SplashPage() {
   const navigate = useNavigate();
-  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
-  const isFirstEntry = useUserPrefsStore((s) => s.isFirstEntry);
   const [isCheckingUser, setIsCheckingUser] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
 
     async function checkUser() {
+      await waitForStoreHydration();
+      if (cancelled) return;
+
+      const isFirstEntry = useUserPrefsStore.getState().isFirstEntry;
+
+      if (isFirstEntry) {
+        /* 최초 진입 — 온보딩으로 (stale auth 제거) */
+        clearAuthSessionOnly();
+        setIsCheckingUser(false);
+        navigate('/onboard', { replace: true });
+        return;
+      }
+
+      /* 재진입 — accessToken으로 서버(또는 mock)에서 로그인·구독 정보 복원 */
       const hasSession = await bootstrapSession();
       if (hasSession) {
         await syncSubscriptionStatus().catch(() => {});
@@ -22,13 +34,7 @@ export default function SplashPage() {
       if (cancelled) return;
 
       setIsCheckingUser(false);
-      if (isFirstEntry) {
-        navigate('/onboard', { replace: true });
-      } else if (useAuthStore.getState().isLoggedIn || isLoggedIn) {
-        navigate('/home', { replace: true });
-      } else {
-        navigate('/login', { replace: true });
-      }
+      navigate('/home', { replace: true });
     }
 
     const timer = setTimeout(() => {
@@ -39,7 +45,7 @@ export default function SplashPage() {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [navigate, isFirstEntry, isLoggedIn]);
+  }, [navigate]);
 
   return (
     <div

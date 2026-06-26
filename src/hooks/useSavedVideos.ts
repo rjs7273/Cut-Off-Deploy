@@ -1,6 +1,6 @@
 import { useReducer, useEffect } from 'react';
 import type { SavedVideo, Folder } from '@/types/saved';
-import { loadSaved, toggleSaveVideo, addSavedFolder } from '@/api/services/saved';
+import { loadSaved, toggleSaveVideo, addSavedFolder, deleteSavedFolder } from '@/api/services/saved';
 
 interface State {
   items: SavedVideo[];
@@ -15,6 +15,7 @@ type Action =
   | { type: 'FETCH_SUCCESS'; items: SavedVideo[]; folders: Folder[] }
   | { type: 'FETCH_ERROR'; payload: string }
   | { type: 'SET_SAVED'; id: string; isSaved: boolean }
+  | { type: 'REMOVE_ITEM'; id: string }
   | { type: 'SET_FOLDER'; folderId: string | null; items: SavedVideo[]; folders: Folder[] }
   | { type: 'ADD_FOLDER'; folder: Folder };
 
@@ -32,6 +33,11 @@ function reducer(state: State, action: Action): State {
         items: state.items.map((item) =>
           item.id === action.id ? { ...item, isSaved: action.isSaved } : item,
         ),
+      };
+    case 'REMOVE_ITEM':
+      return {
+        ...state,
+        items: state.items.filter((item) => item.id !== action.id),
       };
     case 'SET_FOLDER':
       return {
@@ -94,6 +100,10 @@ export function useSavedVideos(isLoggedIn: boolean) {
       .catch(() => onChange?.());
   }
 
+  function removeItem(savedId: string) {
+    dispatch({ type: 'REMOVE_ITEM', id: savedId });
+  }
+
   function setActiveFolder(folderId: string | null) {
     if (folderId === state.activeFolderId) return;
     loadSaved()
@@ -109,6 +119,16 @@ export function useSavedVideos(isLoggedIn: boolean) {
       .catch(() => {});
   }
 
+  function removeFolder(folderId: string) {
+    deleteSavedFolder(folderId)
+      .then(() => loadSaved())
+      .then(({ items, folders }) => {
+        const nextFolderId = state.activeFolderId === folderId ? null : state.activeFolderId;
+        dispatch({ type: 'SET_FOLDER', folderId: nextFolderId, items, folders });
+      })
+      .catch(() => {});
+  }
+
   return {
     items: filteredItems,
     folders: state.folders,
@@ -116,7 +136,9 @@ export function useSavedVideos(isLoggedIn: boolean) {
     isLoading: state.isLoading,
     error: state.error,
     toggleSave,
+    removeItem,
     setActiveFolder,
     addFolder,
+    removeFolder,
   };
 }

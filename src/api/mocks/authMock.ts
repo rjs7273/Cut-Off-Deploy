@@ -93,3 +93,16 @@ export function mockReset(): void {
     /* ignore */
   }
 }
+
+/** 회원 탈퇴 — mock DB에서 사용자 기록(구독 포함) 완전 삭제 */
+export async function mockWithdrawUser(userId: string): Promise<void> {
+  const db = readDb();
+  delete db[userId];
+  writeDb(db);
+}
+
+/** Splash mock 세션 복원 — mock_sv_db에서 사용자 기록 조회 */
+export function mockRestoreSession(userId: string): MockUserRecord | null {
+  const record = readDb()[userId];
+  return record ?? null;
+}

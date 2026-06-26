@@ -63,6 +63,10 @@ export async function mockCreateFolder(name: string): Promise<Folder> {
   return { id: entry.id, name: entry.name, count: 0 };
 }
 
+export function mockDeleteFolder(folderId: string): void {
+  useSavedStore.getState().deleteFolder(folderId);
+}
+
 export function mockIsVideoSaved(videoId: string): boolean {
   return useSavedStore.getState().savedVideoIds.some((e) => e.id === videoId);
 }

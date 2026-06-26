@@ -92,6 +92,7 @@ export interface UseHomeReturn {
   skipPick: () => void;
   restorePick: () => void;
   toggleSave: (id: string) => void;
+  setSaved: (id: string, isSaved: boolean) => void;
   skipOther: (id: string) => void;
   restoreOther: (id: string) => void;
 }
@@ -144,8 +145,12 @@ export function useHome(): UseHomeReturn {
       });
   }, []);
 
+  const setSaved = useCallback((id: string, isSaved: boolean) => {
+    dispatch({ type: 'SET_SAVED', id, isSaved });
+  }, []);
+
   const skipOther = useCallback((id: string) => dispatch({ type: 'SKIP_OTHER', id }), []);
   const restoreOther = useCallback((id: string) => dispatch({ type: 'RESTORE_OTHER', id }), []);
 
-  return { ...state, skipPick, restorePick, toggleSave, skipOther, restoreOther };
+  return { ...state, skipPick, restorePick, toggleSave, setSaved, skipOther, restoreOther };
 }

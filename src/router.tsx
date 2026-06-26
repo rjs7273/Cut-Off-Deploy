@@ -20,6 +20,7 @@ import HistoryPage from '@/pages/HistoryPage';
 import PolicyPage from '@/pages/PolicyPage';
 import FeedbackPage from '@/pages/FeedbackPage';
 import CategoryEditPage from '@/pages/CategoryEditPage';
+import VideoDetailPage from '@/pages/VideoDetailPage';
 
 /* ── 개발 전용 ── */
 import DevUIPage from '@/pages/DevUIPage';
@@ -47,6 +48,7 @@ import DevUIPage from '@/pages/DevUIPage';
    /privacy                  개인정보처리방침
    /feedback                 의견 보내기
    /category-edit            관심사 변경 (마이페이지 → 관심사 설정)
+   /video/:videoId           영상 상세
    ───────────────────────────────────────────────────────────────── */
 export const router = createBrowserRouter([
   /* 기본 리다이렉트 */
@@ -73,6 +75,7 @@ export const router = createBrowserRouter([
       { path: '/privacy',  element: <PolicyPage policyType="privacy" /> },
       { path: '/feedback',       element: <FeedbackPage /> },
       { path: '/category-edit', element: <CategoryEditPage /> },
+      { path: '/video/:videoId',  element: <VideoDetailPage /> },
       { path: '/dev-ui',        element: <DevUIPage /> },
     ],
   },

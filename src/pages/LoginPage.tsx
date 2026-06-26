@@ -13,6 +13,7 @@ export default function LoginPage() {
   const login = useAuthStore((s) => s.login);
   const selectedCategories = useUserPrefsStore((s) => s.selectedCategories);
   const notificationEnabled = useUserPrefsStore((s) => s.notificationEnabled);
+  const isFirstEntry = useUserPrefsStore((s) => s.isFirstEntry);
   const [loginProvider, setLoginProvider] = useState<Provider | null>(null);
   const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +30,8 @@ export default function LoginPage() {
 
     try {
       await login(loginProvider, { selectedCategories, notificationEnabled });
-      navigate('/onboard', { replace: true });
+      const onboardingPending = useUserPrefsStore.getState().isFirstEntry || isFirstEntry;
+      navigate(onboardingPending ? '/onboard' : '/home', { replace: true });
     } finally {
       setIsLoading(false);
     }
