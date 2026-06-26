@@ -17,35 +17,35 @@ export default function VideoDetailHeader({ onBack, onShare }: VideoDetailHeader
   return (
     <header
       className={[
-        'flex-shrink-0 flex items-center justify-between',
-        'h-[56px] px-5',
-        'sticky top-0 z-[5]',
-        'pt-safe app-bar-safe',
+        'flex-shrink-0 sticky top-0 z-[5]',
+        'pt-safe',
         'bg-surface border-b border-line',
       ].join(' ')}
     >
-      <div className="flex items-center min-w-[40px]">
-        <button
-          type="button"
-          className="w-[36px] h-[36px] -ml-1 flex items-center justify-center text-fg"
-          aria-label="뒤로가기"
-          onClick={handleBack}
-        >
-          <ArrowLeft size={22} strokeWidth={1.8} />
-        </button>
-      </div>
+      <div className="flex items-center justify-between h-[56px] px-5">
+        <div className="flex items-center min-w-[40px]">
+          <button
+            type="button"
+            className="w-[36px] h-[36px] -ml-1 flex items-center justify-center text-fg"
+            aria-label="뒤로가기"
+            onClick={handleBack}
+          >
+            <ArrowLeft size={22} strokeWidth={1.8} />
+          </button>
+        </div>
 
-      <div className="flex-1" />
+        <div className="flex-1" />
 
-      <div className="flex items-center min-w-[40px] justify-end">
-        <button
-          type="button"
-          className="w-[36px] h-[36px] -mr-1 flex items-center justify-center text-fg-muted"
-          aria-label="공유하기"
-          onClick={onShare}
-        >
-          <Share2 size={20} strokeWidth={1.8} />
-        </button>
+        <div className="flex items-center min-w-[40px] justify-end">
+          <button
+            type="button"
+            className="w-[36px] h-[36px] -mr-1 flex items-center justify-center text-fg-muted"
+            aria-label="공유하기"
+            onClick={onShare}
+          >
+            <Share2 size={20} strokeWidth={1.8} />
+          </button>
+        </div>
       </div>
     </header>
   );
