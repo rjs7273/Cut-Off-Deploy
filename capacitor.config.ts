@@ -15,6 +15,12 @@ const config: CapacitorConfig = {
     PushNotifications: {
       presentationOptions: ['badge', 'sound', 'banner', 'list'],
     },
+    StatusBar: {
+      overlaysWebView: true,
+    },
+    SystemBars: {
+      insetsHandling: 'css',
+    },
   },
 };
 

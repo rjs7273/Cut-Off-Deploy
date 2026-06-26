@@ -1,7 +1,9 @@
 import { RouterProvider } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
+import { StatusBar, Style } from '@capacitor/status-bar';
 import { router } from './router';
 import { queryClient } from './lib/queryClient';
 import { initTheme } from './store/themeStore';
@@ -12,6 +14,13 @@ import { setupPushNotificationActionRouting } from '@/lib/pushNotifications';
 export default function App() {
   useEffect(() => {
     initTheme();
+  }, []);
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    StatusBar.setOverlaysWebView({ overlay: true }).catch(() => {});
+    StatusBar.setStyle({ style: Style.Default }).catch(() => {});
   }, []);
 
   useEffect(() => {

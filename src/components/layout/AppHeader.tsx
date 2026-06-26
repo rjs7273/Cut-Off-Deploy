@@ -52,15 +52,14 @@ export default function AppHeader({
   return (
     <header
       className={[
-        'flex-shrink-0 flex items-center justify-between',
-        'h-[56px] px-5',
-        'sticky top-0 z-[5]',
-        'pt-safe app-bar-safe',   /* Capacitor safe-area */
+        'flex-shrink-0 sticky top-0 z-[5]',
+        'pt-safe',
         baseStyle,
       ]
         .filter(Boolean)
         .join(' ')}
     >
+      <div className="flex items-center justify-between h-[56px] px-5">
       {/* ── 좌측 영역 ── */}
       <div className="flex items-center min-w-[40px]">
         {/* Home variant: 햄버거 메뉴 */}
@@ -140,6 +139,7 @@ export default function AppHeader({
             <User size={20} strokeWidth={1.8} />
           </button>
         )}
+      </div>
       </div>
     </header>
   );

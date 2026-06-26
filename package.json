@@ -19,6 +19,7 @@
     "@capacitor/core": "^8.4.1",
     "@capacitor/ios": "^8.4.1",
     "@capacitor/push-notifications": "^8.1.1",
+    "@capacitor/status-bar": "^8.0.2",
     "@revenuecat/purchases-capacitor": "^13.2.0",
     "@tanstack/react-query": "^5.101.0",
     "axios": "^1.18.0",

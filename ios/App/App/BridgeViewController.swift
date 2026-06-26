@@ -17,5 +17,6 @@ class BridgeViewController: CAPBridgeViewController {
     private func enableSwipeBackGesture() {
         guard let webView = webView as? WKWebView else { return }
         webView.allowsBackForwardNavigationGestures = true
+        webView.scrollView.contentInsetAdjustmentBehavior = .never
     }
 }
